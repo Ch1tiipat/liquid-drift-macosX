@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Secrets (never commit)
+.env
+.env.*
+*.pem
+*.p12
+*.p8
+*.key
+*.mobileprovision
+*.cer
+secrets/
+license-signing/
+
+# Agent scratch
+.claude/settings.local.json
+
+# Private assets (images, logo sources); never commit
+/assets-private/
