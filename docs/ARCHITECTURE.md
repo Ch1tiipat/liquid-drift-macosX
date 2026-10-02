@@ -9,7 +9,8 @@ App (thin)            LSUIElement app, menu-bar item, windows, launch at login
  ├─ LDCore            FeatureModule, ModuleRegistry, ModeManager, SettingsStore,
  │                    PermissionCenter, LicenseGate (hook), UpdateChecker (off by default)
  ├─ LDIsland          IslandPanelController (NSPanel), IslandStateMachine, NotchGeometry
- ├─ LDModules         ShelfModule, ClipboardModule, NowPlayingModule, BatteryModule
+ ├─ LDModules         ShelfModule, ClipboardModule, NowPlayingModule, BatteryModule,
+ │                    AgentStatusModule (R2)
  └─ LDUI              DesignTokens, ControlCenterView, SettingsView, shared components
 ```
 
@@ -76,6 +77,22 @@ drag of files near notch ──▶ dropTarget (expands the shelf) ──▶ idle
 - `collectionBehavior`: `canJoinAllSpaces` + `fullScreenAuxiliary`, and test Stage Manager.
   `primary`, `auxiliary` and `canJoinAllApplications` are mutually exclusive.
 - Never steal focus from the user's frontmost app unless the user clicks into a text field.
+
+## Agent providers (R2, VERIFY)
+`AgentStatusModule` (F-20) gets its data from `AgentProvider` objects, one per tool, the same idea as
+`NowPlayingProvider`. First tools: Claude Code and Codex CLI. The method (hooks or session files) is decided
+after spike S-006 (ADR-012). Sketch, not final:
+
+```swift
+protocol AgentProvider: AnyObject {
+    var id: AgentProviderID { get }                      // .claudeCode, .codexCLI
+    func start() async throws                            // begin watching
+    func stop()                                          // release EVERYTHING: watchers, sockets, timers
+    var sessions: AsyncStream<[AgentSessionState]> { get }
+}
+// AgentSessionState: opaque id, tool, state (.working, .waitingForUser, .done, .idle, .unknown).
+// No prompt, code or reply text is stored. An unreadable or changed format gives .unknown, never a guess.
+```
 
 ## Persistence
 - Settings: `UserDefaults` behind `SettingsStore`.

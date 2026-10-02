@@ -26,3 +26,9 @@ Environment: macOS ______  Xcode ______  Mac model ______  Date ______
 | 18 | Now Playing: Apple Music | Title, artist, controls work | |
 | 19 | Screen recording on | Behavior as designed | |
 | 20 | Idle CPU and energy | Near zero in Activity Monitor | |
+| 21 | Agent Status (R2): a Claude Code turn | Shows working, then done | |
+| 22 | Agent Status (R2): a Codex CLI turn | Shows working, then done | |
+| 23 | Agent Status (R2): a tool waits for you | Shows waiting | |
+| 24 | Agent Status (R2): module switched off | No watcher left, CPU about 0 | |
+
+Rows 21 to 24 apply only after F-20 (Agent Status) exists.
