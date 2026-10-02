@@ -2,6 +2,7 @@
 
 - **Owner of the task:** Claude Code
 - **Phase:** 0 | **Branch:** `task/s-004-now-playing`
+- **Depends on:** T-000
 
 ## Question
 What is the least-permission way to read track info and send play / pause / next / previous for each app on macOS 27?
@@ -15,3 +16,6 @@ What is the least-permission way to read track info and send play / pause / next
 - [ ] `FINDINGS.md` has one row per app and option
 - [ ] A recommended implementation for `SpotifyProvider` and `AppleMusicProvider`
 - [ ] Clear note if the system-wide API is not usable
+
+## Do NOT
+Merge spike code into the app. Add dependencies. Record no playlists, listening history or account names in FINDINGS.md. Use any public track. If a permission prompt (for example Automation) appears, tell the owner and let them decide.

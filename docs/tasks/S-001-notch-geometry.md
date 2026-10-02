@@ -2,6 +2,7 @@
 
 - **Owner of the task:** Claude Code
 - **Phase:** 0 | **Branch:** `task/s-001-notch-geometry`
+- **Depends on:** T-000
 
 ## Question
 Can we read the notch size and place a borderless panel exactly around it on a MacBook Air M4?
@@ -17,4 +18,4 @@ Can we read the notch size and place a borderless panel exactly around it on a M
 - [ ] Clear yes / no / workaround for each question
 
 ## Do NOT
-Merge spike code into the app. Add dependencies.
+Merge spike code into the app. Add dependencies. Put screenshots, window titles of private apps or any personal data in FINDINGS.md.

@@ -102,6 +102,7 @@ protocol AgentProvider: AnyObject {
 ## Platform
 - Minimum macOS 15 (ADR-007). Built with the Xcode 27 SDK. Only macOS 27 is tested.
 - Use availability checks (`#available`) for anything newer than macOS 15. Do not claim macOS 15 works until it is tested on a real Mac.
+- **VERIFY:** that Xcode 27 can build with a macOS 15 deployment target. Check it when the Xcode project is created in Phase 1.
 
 ## Distribution (alpha)
 - Not sandboxed (global features need broader access). Hardened Runtime ON. Minimal entitlements.
