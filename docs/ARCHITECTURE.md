@@ -10,7 +10,7 @@ App (thin)            LSUIElement app, menu-bar item, windows, launch at login
  │                    PermissionCenter, LicenseGate (hook), UpdateChecker (off by default)
  ├─ LDIsland          IslandPanelController (NSPanel), IslandStateMachine, NotchGeometry
  ├─ LDModules         ShelfModule, ClipboardModule, NowPlayingModule, BatteryModule,
- │                    AgentStatusModule (R2)
+ │                    AgentStatusModule
  └─ LDUI              DesignTokens, ControlCenterView, SettingsView, shared components
 ```
 
@@ -78,7 +78,7 @@ drag of files near notch ──▶ dropTarget (expands the shelf) ──▶ idle
   `primary`, `auxiliary` and `canJoinAllApplications` are mutually exclusive.
 - Never steal focus from the user's frontmost app unless the user clicks into a text field.
 
-## Agent providers (R2, VERIFY)
+## Agent providers (VERIFY)
 `AgentStatusModule` (F-20) gets its data from `AgentProvider` objects, one per tool, the same idea as
 `NowPlayingProvider`. First tools: Claude Code and Codex CLI. The method (hooks or session files) is decided
 after spike S-006 (ADR-012). Sketch, not final:
@@ -98,6 +98,10 @@ protocol AgentProvider: AnyObject {
 - Settings: `UserDefaults` behind `SettingsStore`.
 - Clipboard history: encrypted file store. The encryption key lives in the Keychain. (ADR-003 decides the format.)
 - File shelf: store bookmark data (references), never copies of files.
+
+## Platform
+- Minimum macOS 15 (ADR-007). Built with the Xcode 27 SDK. Only macOS 27 is tested.
+- Use availability checks (`#available`) for anything newer than macOS 15. Do not claim macOS 15 works until it is tested on a real Mac.
 
 ## Distribution (alpha)
 - Not sandboxed (global features need broader access). Hardened Runtime ON. Minimal entitlements.

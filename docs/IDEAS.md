@@ -13,7 +13,7 @@ Every entry says where the idea came from, under which license, and what we read
 
 | Idea | Where it went |
 |---|---|
-| Live status of coding agent sessions | F-20 (R2), Claude Code and Codex CLI only |
+| Live status of coding agent sessions | F-20 (MVP), Claude Code and Codex CLI only |
 | Quiet rules: no alert when you look at that session, quiet hours, mute while locked | F-21 (Later) |
 | Approve or deny a tool call from the notch | F-22 (Later, high risk) |
 | Same status for the Codex desktop app | F-23 (Later) |

@@ -3,7 +3,7 @@
 Repo: https://github.com/Ch1tiipat/liquid-drift-macosX
 
 A free macOS utility that turns the MacBook notch into a small, fluid "island":
-file shelf, clipboard history, Now Playing and battery. Every feature is a module
+file shelf, clipboard history, Now Playing, battery and the status of Claude Code and Codex CLI sessions. Every feature is a module
 that you can switch on or off, and you can group those switches into **modes**.
 
 > Status: **pre-alpha (planning)**. Nothing is released yet.
@@ -19,7 +19,7 @@ that you can switch on or off, and you can group those switches into **modes**.
 
 | Mode | What is on |
 |---|---|
-| Code Focus | File shelf, clipboard history (agent status later) |
+| Code Focus | File shelf, clipboard history, agent status |
 | Listen | Now Playing, battery |
 | Presentation | Everything quiet |
 | Everything | All modules |
@@ -28,7 +28,8 @@ that you can switch on or off, and you can group those switches into **modes**.
 ## Requirements
 
 - MacBook with Apple silicon. Developed on a MacBook Air M4.
-- Planned development on macOS 27 with Xcode 27. Not confirmed yet: task T-000 records the real versions in `docs/ENVIRONMENT.md`. Minimum macOS version: **to be confirmed** (default: 15).
+- Developed on macOS 27 with Xcode 27 (task T-000 records the exact versions in `docs/ENVIRONMENT.md`).
+- Minimum macOS version: **15**. Only macOS 27 is tested for now.
 
 ## Docs
 

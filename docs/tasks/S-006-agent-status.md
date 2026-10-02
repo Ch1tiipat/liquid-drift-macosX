@@ -1,7 +1,7 @@
 # S-006: Agent status for Claude Code and Codex CLI
 
 - **Owner of the task:** Claude Code
-- **Phase:** after Phase 3, before F-20 starts. Not part of the Phase 0 exit criteria.
+- **Phase:** 0 (Agent Status is in the MVP, ADR-013)
 - **Branch:** `task/s-006-agent-status`
 - **Depends on:** T-000
 
