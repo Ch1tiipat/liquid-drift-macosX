@@ -4,6 +4,8 @@ Fill the Result column on a real Mac. Use: PASS, FAIL, N/A, and a note.
 
 Environment: macOS ______  Xcode ______  Mac model ______  Date ______
 
+Tested on macOS 27 only. Minimum macOS 15 is a build setting. Mark macOS 15 and 26 as UNTESTED unless you test them on a real Mac.
+
 | # | Scenario | Expected | Result |
 |---|---|---|---|
 | 1 | Notch position and size are correct | Island matches the notch | |
@@ -26,9 +28,7 @@ Environment: macOS ______  Xcode ______  Mac model ______  Date ______
 | 18 | Now Playing: Apple Music | Title, artist, controls work | |
 | 19 | Screen recording on | Behavior as designed | |
 | 20 | Idle CPU and energy | Near zero in Activity Monitor | |
-| 21 | Agent Status (R2): a Claude Code turn | Shows working, then done | |
-| 22 | Agent Status (R2): a Codex CLI turn | Shows working, then done | |
-| 23 | Agent Status (R2): a tool waits for you | Shows waiting | |
-| 24 | Agent Status (R2): module switched off | No watcher left, CPU about 0 | |
-
-Rows 21 to 24 apply only after F-20 (Agent Status) exists.
+| 21 | Agent Status: a Claude Code turn | Shows working, then done | |
+| 22 | Agent Status: a Codex CLI turn | Shows working, then done | |
+| 23 | Agent Status: a tool waits for you | Shows waiting | |
+| 24 | Agent Status: module switched off | No watcher left, CPU about 0 | |

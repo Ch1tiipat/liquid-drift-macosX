@@ -25,7 +25,7 @@ Tiers: **MVP** = first usable alpha. **R2** = after real use. **Later** = only i
 | F-17 | Local dev ports monitor | Later | none | medium |
 | F-18 | Floating pill for Macs without a notch, multi-display | Later | none | medium |
 | F-19 | License key (offline, signed) | Later | none | medium |
-| F-20 | Agent Status, read-only: live state of Claude Code and Codex CLI sessions (working, waiting, done) | R2 | VERIFY (depends on S-006) | **high** |
+| F-20 | Agent Status, read-only: live state of Claude Code and Codex CLI sessions (working, waiting, done) | MVP | VERIFY (depends on S-006) | **high** |
 | F-21 | Agent Status quiet rules: no alert when you already look at that session, quiet hours, mute while screen is locked | Later | none | low |
 | F-22 | Approve or deny an agent tool call from the island | Later | VERIFY | **high** |
 | F-23 | Agent Status for the Codex desktop app | Later | VERIFY | **high** |
@@ -42,6 +42,7 @@ Goal: see what your coding agents are doing without switching windows.
 
 **First target (owner decision):** Claude Code and Codex CLI only. The owner also uses the Codex
 desktop app, but the CLI comes first to save time. The desktop app is F-23.
+F-20 is part of the MVP (ADR-013).
 
 Design:
 - `AgentProvider` protocol with two implementations: `ClaudeCodeProvider` and `CodexCLIProvider`.
@@ -53,7 +54,7 @@ Design:
 Two ways to get the status. Spike **S-006** (`docs/tasks/S-006-agent-status.md`) compares them with dummy data only:
 1. **Hooks:** the agent calls a small helper when something happens. Needs a change in the tool's own config file.
 2. **Session files:** watch the files the tool already writes, read-only. Nothing is installed in the tool.
-Pick the one that is more accurate and needs fewer permissions (ADR-012). Do not decide before S-006. Run S-006 after Phase 3, before F-20 starts.
+Pick the one that is more accurate and needs fewer permissions (ADR-012). Do not decide before S-006. Run S-006 in Phase 0, together with S-001 to S-005 (ADR-013).
 
 Rules:
 - The user installs or enables any hook by hand. The app never edits another tool's config silently.
@@ -76,7 +77,7 @@ Rules:
 ## Mode presets (first draft)
 | Mode | Modules on |
 |---|---|
-| Code Focus | F-06 shelf, F-05 clipboard, F-20 agent status (once it exists) |
+| Code Focus | F-06 shelf, F-05 clipboard, F-20 agent status |
 | Listen | F-07 now playing, F-08 battery |
 | Presentation | none |
 | Everything | all |
