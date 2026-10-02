@@ -2,6 +2,7 @@
 
 - **Owner of the task:** Claude Code
 - **Phase:** 0 | **Branch:** `task/s-002-spaces`
+- **Depends on:** S-001
 
 ## Question
 Does the panel stay visible and usable with `collectionBehavior` `canJoinAllSpaces` + `fullScreenAuxiliary`,
@@ -15,3 +16,6 @@ on Spaces, full-screen apps, Stage Manager and Mission Control?
 ## Acceptance criteria
 - [ ] `FINDINGS.md` has a table: scenario, result, workaround if any
 - [ ] Rows 2 to 5 and 8 of `docs/RELEASE_MATRIX.md` can be predicted from it
+
+## Do NOT
+Merge spike code into the app. Add dependencies. Put screenshots, window titles of private apps or any personal data in FINDINGS.md.

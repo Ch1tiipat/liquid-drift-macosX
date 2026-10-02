@@ -2,6 +2,7 @@
 
 - **Owner of the task:** Claude Code
 - **Phase:** 0 | **Branch:** `task/s-003-drag`
+- **Depends on:** S-001
 
 ## Question
 How can the app know that the user is dragging files toward the notch, and accept a drop there,
@@ -16,3 +17,9 @@ without special permissions? This is the riskiest feature (F-06).
 ## Acceptance criteria
 - [ ] `FINDINGS.md` states which approach works, its permissions, and its limits
 - [ ] A recommendation for F-06 and for F-11 (shake basket)
+
+## Do NOT
+Merge spike code into the app. Add dependencies. Use the owner's real files or folders. Put real file names in FINDINGS.md.
+
+## Test data
+Use only dummy files and folders that you create in an empty scratch folder for this test.
