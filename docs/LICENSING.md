@@ -7,6 +7,9 @@
 - Code is written from scratch. Other apps (for example Droppy, NotchNook, Boring Notch) are used
   for ideas only. Droppy is reported to be published under GPL-3.0 with the Commons Clause (check its repo), so copying its code
   would bind this project to those terms.
+- Ideas for Agent Status come from CodeIsland (MIT license). We read its public README and LICENSE only. We copied no code and no assets.
+  The MIT license would allow copying with its copyright notice, but this project does not do it (`AGENTS.md` rule 4).
+  If that ever changes, write an ADR first and list the code in `THIRD_PARTY_LICENSES.md`.
 - No Apple Developer Program membership for now. Builds are not notarized, so other people will
   see a Gatekeeper warning. Alpha users either build from source or follow written steps to allow the app.
 

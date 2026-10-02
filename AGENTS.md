@@ -15,7 +15,7 @@ Read first: `docs/ARCHITECTURE.md`, `docs/FEATURES.md`, `docs/ROADMAP.md`, `docs
 2. One branch per task: `task/<id>-<slug>`. Never commit to `main` directly.
 3. No new third-party dependency without an ADR in `docs/DECISIONS.md` that the owner approved.
 4. Do not copy code, assets, names or text from other apps (Droppy, NotchNook, Boring Notch,
-   Lucid, and so on). Ideas are fine. Code must be original. If you use any open-source code,
+   Lucid, CodeIsland, and so on). Ideas are fine. Code must be original. If you use any open-source code,
    record it in `THIRD_PARTY_LICENSES.md` with its license first.
 5. Every feature is a `FeatureModule`. A module that is off must hold **no** observers, timers,
    event taps, file handles or windows.

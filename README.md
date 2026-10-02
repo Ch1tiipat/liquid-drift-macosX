@@ -19,7 +19,7 @@ that you can switch on or off, and you can group those switches into **modes**.
 
 | Mode | What is on |
 |---|---|
-| Code Focus | File shelf, clipboard history |
+| Code Focus | File shelf, clipboard history (agent status later) |
 | Listen | Now Playing, battery |
 | Presentation | Everything quiet |
 | Everything | All modules |
@@ -28,7 +28,7 @@ that you can switch on or off, and you can group those switches into **modes**.
 ## Requirements
 
 - MacBook with Apple silicon. Developed on a MacBook Air M4.
-- Planned development on macOS 27 with Xcode 27 (confirmed by task T-000). Minimum macOS version: **to be confirmed** (default: 15).
+- Planned development on macOS 27 with Xcode 27. Not confirmed yet: task T-000 records the real versions in `docs/ENVIRONMENT.md`. Minimum macOS version: **to be confirmed** (default: 15).
 
 ## Docs
 
@@ -43,6 +43,7 @@ that you can switch on or off, and you can group those switches into **modes**.
 | `docs/RELEASE_MATRIX.md` | Compatibility test checklist |
 | `docs/LICENSING.md` | License decisions and checklist before the alpha release |
 | `docs/DECISIONS.md` | Decision log |
+| `docs/IDEAS.md` | Ideas taken from other apps, with source and license |
 | `docs/tasks/` | Task cards for agents |
 
 ## License
