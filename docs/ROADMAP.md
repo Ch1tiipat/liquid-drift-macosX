@@ -4,7 +4,7 @@ Confirmed by the owner on 2026-10-02: **minimum macOS = 15** (built for 15, test
 
 | Phase | Goal | Exit criteria |
 |---|---|---|
-| -1 Setup | Mac ready, repo ready | `sw_vers`, `xcodebuild -version`, `swift --version` recorded in `docs/ENVIRONMENT.md`; public repo created (liquid-drift-macosX) |
+| -1 Setup | Mac ready, repo ready | `xcode-select -p`, `sw_vers`, `xcodebuild -version`, `swift --version`, `uname -m` recorded in `docs/ENVIRONMENT.md`; public repo created (liquid-drift-macosX) |
 | 0 Spikes | Prove risky platform behavior | S-001 to S-006 each have a `FINDINGS.md` with a clear yes / no / workaround |
 | 1 Shell | App runs, panel shows at the notch | LSUIElement app, menu-bar item, NSPanel at notch, ModuleRegistry with stub modules, Settings shell, `LicenseGate` = `AlwaysAllowed`; deployment target macOS 15 builds with Xcode 27 (VERIFY, ADR-007) |
 | 2 Transitions | Island feels right | State machine with tests, hover delay setting, global hotkey, ModeManager, Reduce Motion respected |

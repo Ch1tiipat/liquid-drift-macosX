@@ -19,4 +19,7 @@ without special permissions? This is the riskiest feature (F-06).
 - [ ] A recommendation for F-06 and for F-11 (shake basket)
 
 ## Do NOT
-Merge spike code into the app. Add dependencies. Use only dummy files and folders that you create in an empty scratch folder for this test. Never use the owner's real files. FINDINGS.md must contain no real file names.
+Merge spike code into the app. Add dependencies. Use the owner's real files or folders. Put real file names in FINDINGS.md.
+
+## Test data
+Use only dummy files and folders that you create in an empty scratch folder for this test.

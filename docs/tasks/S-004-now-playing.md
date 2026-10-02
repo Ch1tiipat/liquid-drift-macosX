@@ -18,4 +18,7 @@ What is the least-permission way to read track info and send play / pause / next
 - [ ] Clear note if the system-wide API is not usable
 
 ## Do NOT
-Merge spike code into the app. Add dependencies. Record no playlists, listening history or account names in FINDINGS.md. Use any public track. If a permission prompt (for example Automation) appears, tell the owner and let them decide.
+Merge spike code into the app. Add dependencies. Record playlists, listening history or account names in FINDINGS.md. Click through a permission prompt (for example Automation): tell the owner and let them decide.
+
+## Test data
+Use any public track.
