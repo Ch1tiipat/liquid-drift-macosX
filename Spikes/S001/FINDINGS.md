@@ -32,9 +32,9 @@ The app has no menu and no Dock icon. It quits by itself after `--seconds` (defa
 | Question | Answer | Evidence |
 |---|---|---|
 | Q1 notch size readable | YES | `safeAreaInsets.top` = 32, `auxiliaryTopLeftArea` / `auxiliaryTopRightArea` both present. Two formulas give the same rect (see Formulas). |
-| Q2 panel hugging the notch | YES | Owner confirmed variant A and variant B line up with the notch. Owner screenshot (not committed) shows the pill centered over the notch, above the menu bar. Screenshot evidence: variant A, no screenshot; variant B, yes (one screenshot at default scaling before the fix and one after the fix show the pill centered over the notch). A variant without a screenshot rests on the owner's answer only. One earlier owner answer ('lines up') disagreed with a screenshot taken at the same time (the panel sat below the menu bar because of the bug fixed later), so answers without a screenshot are weaker evidence. |
+| Q2 panel hugging the notch | YES | Owner confirmed variant A and variant B line up with the notch. Owner screenshot (not committed) shows the pill centered over the notch, above the menu bar. Screenshot evidence: variant A, no screenshot; variant B, yes (one screenshot at default scaling before the fix (pill centered horizontally but below the menu bar, which exposed the bug) and one after the fix (pill centered over the notch, above the menu bar)). A variant without a screenshot rests on the owner's answer only. One earlier owner answer ('lines up') disagreed with a screenshot taken at the same time (the panel sat below the menu bar because of the bug fixed later), so answers without a screenshot are weaker evidence. |
 | Q3 window level above menu bar | YES | Owner confirmed the panel is drawn above the menu bar at every level tried. Lowest tried: `.mainMenu` (24). |
-| Q4 display scaling | UNCONFIRMED | The scaling option was never actually changed: the screen stayed 1470 x 956 pt in all reads and in owner screenshots (2940 x 1912 px). The repositioning path was exercised by Dock-area changes only (see Scaling table). |
+| Q4 display scaling | UNCONFIRMED | The scaling option was never actually changed: the screen stayed 1470 x 956 pt in all reads and in owner screenshots (2940 x 1912 px). The repositioning path was exercised by Dock-area changes only (see Scaling table). (retested in S-002, see Spikes/S002/FINDINGS.md) |
 | Q5 hotkey without Accessibility | YES | Carbon `RegisterEventHotKey` (Control+Option+Command+L) returned status 0. Owner pressed it twice: panel hid, then came back (log: `visible = false`, then `visible = true`). Owner saw no permission prompt. |
 | Q6 hotkey with Accessibility | UNCONFIRMED | `NSEvent.addGlobalMonitorForEvents` without trust: `AXIsProcessTrusted()` = false, monitor object returned, but key presses were never delivered and no prompt appeared (owner confirmed). Owner chose not to grant Accessibility (see Hotkeys limit). |
 | Focus check | YES | `frontmost application unchanged: true` in every run (10 runs). |
@@ -81,10 +81,9 @@ AppKit rounds the window frame to whole points: variant A came out as (645, 924,
 (629, 900, 212, 56) at first show, (629, 900, 211, 56) after `setFrame`. Half-point notch edges cannot be matched
 exactly by the window frame. Draw the shape inside the content view if sub-point alignment matters.
 
-**Bug found and fixed in the spike:** after a screen-parameter change, `setFrame` moved the panel to
+**Bug found and fixed in the spike:** the panel was found at
 y = 867 (its top at the bottom of the menu bar), not y = 900. The owner screenshot showed the pill below the menu bar.
-Cause: `NSWindow.constrainFrameRect(_:to:)` keeps windows below the menu bar. The first `orderFront` was not
-constrained, later `setFrame` calls were. Fix: override `constrainFrameRect` in the panel subclass and return the
+Cause: `NSWindow.constrainFrameRect(_:to:)` keeps windows below the menu bar. It is not established when the constraint first applied: an owner screenshot showed the pill below the menu bar before any screen-parameters event was logged (entering a full-screen Space may be the trigger; unconfirmed). S-002 logs the frame on every move to find out. Fix: override `constrainFrameRect` in the panel subclass and return the
 frame unchanged. After the fix, five more change events kept the panel at y = 900.
 
 ## Window level
@@ -125,7 +124,7 @@ real app bundle until the Phase 1 app exists.
 
 | Option | frame (pt) | Notch rect | Panel lines up (owner) |
 |---|---|---|---|
-| Default | 1470 x 956 | (645.5, 924, 179, 32) | yes (variants A and B; screenshot) |
+| Default | 1470 x 956 | (645.5, 924, 179, 32) | yes (variant A: owner answer only; variant B: screenshot) |
 | More Space | not reached: frame stayed 1470 x 956 | — | UNCONFIRMED |
 | Larger Text | not tested | — | UNCONFIRMED |
 
@@ -137,6 +136,8 @@ real app bundle until the Phase 1 app exists.
 - Q4 display scaling: change the scaling for real (More Space, then Larger Text), confirm that the printed `frame` changes, then check the panel.
 - Window level side effects: a deliberate recheck (an open menu, Spotlight, Control Center) with the `constrainFrameRect` fix in place.
 - Q6 and every permission result stay UNCONFIRMED until the Phase 1 app bundle exists.
+
+Result: see Spikes/S002/FINDINGS.md, section Carry-over from S-001.
 
 ## VERIFY items answered
 
