@@ -83,7 +83,7 @@ exactly by the window frame. Draw the shape inside the content view if sub-point
 
 **Bug found and fixed in the spike:** the panel was found at
 y = 867 (its top at the bottom of the menu bar), not y = 900. The owner screenshot showed the pill below the menu bar.
-Cause: `NSWindow.constrainFrameRect(_:to:)` keeps windows below the menu bar. It is not established when the constraint first applied: an owner screenshot showed the pill below the menu bar before any screen-parameters event was logged (entering a full-screen Space may be the trigger; unconfirmed). S-002 logs the frame on every move to find out. Fix: override `constrainFrameRect` in the panel subclass and return the
+Cause: `NSWindow.constrainFrameRect(_:to:)` keeps windows below the menu bar. It is not established when the constraint first applied: an owner screenshot showed the pill below the menu bar before any screen-parameters event was logged (entering a full-screen Space may be the trigger; unconfirmed). S-002 could not settle it: its panel always had the override on (see Spikes/S002/FINDINGS.md, section Open items). A run without the override would show whether it is needed. Fix: override `constrainFrameRect` in the panel subclass and return the
 frame unchanged. After the fix, five more change events kept the panel at y = 900.
 
 ## Window level

@@ -43,7 +43,7 @@ All runs `--behavior base --level statusBar` unless the row says otherwise.
 | Scenario | Result | Workaround | Evidence |
 |---|---|---|---|
 | a. Second Space | YES | — | Owner: visible on both desktops, same place. Log: 11 `activeSpaceDidChange` events, every one at frame (629, 900, 211-212, 56), `isVisible=true`, no FRAME MISMATCH. An earlier owner answer ("yes, both") was given before a second desktop existed (log had no Space event, and the owner later said only one desktop was open); it was discarded. |
-| b. Full-screen app | NO | none found | Owner screenshots (not committed) in full screen show only the lower part of the pill: the top band of the screen (0 to about 33 pt) covers the upper part, both while the menu bar is hidden and while it is shown. Tried one change at a time: `--level popUpMenu`, `--level screenSaver`, `--behavior stationary`, `--behavior spacesOnly`; owner saw the same lower-part-only result each time (screenshots for `screenSaver` and `stationary`; owner answer only for `popUpMenu` and `spacesOnly`). One owner answer ("full pill", `stationary`) disagreed with a screenshot taken right after it and was discarded. The menu bar stays clickable (screenshot). Frame stayed at y = 900 in every full-screen run, no FRAME MISMATCH, so this is drawing order, not a frame change. `.ignoresCycle` was not tried: it only affects window cycling, not drawing order. What the owner sees: in a full-screen app only the part of the pill below the top band is visible. |
+| b. Full-screen app | NO | none found | Owner screenshots (not committed) in full screen show only the lower part of the pill: the top band of the screen (0 to about 33 pt) covers the upper part, both while the menu bar is hidden and while it is shown. Tried one change at a time: `--level popUpMenu`, `--level screenSaver`, `--behavior stationary`, `--behavior spacesOnly`; owner saw the same lower-part-only result each time (screenshots for `screenSaver` and `stationary`; owner answer only for `popUpMenu` and `spacesOnly`). One owner answer ("full pill", `stationary`) disagreed with a screenshot taken right after it and was discarded. The menu bar stays clickable (screenshot). Frame stayed at y = 900 in every full-screen run, no FRAME MISMATCH, so this is drawing order, not a frame change. `.ignoresCycle` was not tried: it only affects window cycling, not drawing order. What the owner sees: in a full-screen app only the part of the pill below the top band is visible. Levels above `.screenSaver` (1000), for example the screen-shield level, were not tried, so NO holds only for the levels and behaviors listed here. |
 | c. Stage Manager | YES | — | Owner: panel stays in place while windows are rearranged. Log: frame constant, `isVisible=true`, no FRAME MISMATCH. No screenshot, and no notification tells code that Stage Manager is on, so this rests on the owner answer. |
 | d. Mission Control | YES | — | Owner: visible during Mission Control and back in place after. Log: no `didMove`, no FRAME MISMATCH, frame constant. No temporary MISMATCH appeared. |
 | e. Sleep and wake | YES with `stationary`; UNCONFIRMED with `base` | — | Run `--behavior stationary`: log `willSleep`, `screensDidWake`, `didWake`, frame (629, 900, 212, 56) before and after, `isVisible=true`, no FRAME MISMATCH. Owner: visible in the same place after wake; owner screenshot taken after wake shows the pill on the notch. The owner chose not to repeat sleep with `base`. |
@@ -65,7 +65,7 @@ All runs `--behavior base --level statusBar` unless the row says otherwise.
 ### Q4 display scaling
 
 `System Settings > Displays` on this Mac had "Show all resolutions" switched on, so the options are a list of sizes,
-not named thumbnails. This explains S-001: the scaling was never really changed there. The owner's original option is
+not named thumbnails. This probably explains S-001: the scaling was never really changed there (not proven). The owner's original option is
 `1470 x 956` (labelled as the default). The owner set it back at the end (log shows frame 1470 x 956 again).
 
 | Option (as listed) | frame (pt) | Notch rect | Panel frame after reposition | Owner: lines up |
@@ -135,8 +135,7 @@ No FRAME MISMATCH appeared in any Space, full-screen, Stage Manager, Mission Con
 run. The S-001 position bug (y = 867) did not reappear with the `constrainFrameRect` override in place.
 
 Related, UNCONFIRMED: in full screen the upper part of the pill is hidden **without** any frame change (scenario b).
-The S-001 screenshot that showed the pill "below the menu bar" before any screen-parameters event was taken with a
-full-screen app in front, so it may show this full-screen effect and not the constraint bug.
+The S-001 screenshot that showed the pill 'below the menu bar' may have been taken with a full-screen app in front (a guess; it is not known). This guess does not explain the S-001 bug by itself: S-001 reports the panel frame at y = 867 and a full-height pill below the bar, while in full screen S-002 saw the frame stay at y = 900 and only the lower part of the pill. Keep the `constrainFrameRect` override in the Phase 1 notes until a run without the override shows it is not needed.
 
 `occlusionVisible` was `false` on several `activeSpaceDidChange` lines and on the first line after showing the panel,
 while the owner saw the pill. It looks like occlusion is updated after the transition; it is not a reliable
@@ -150,11 +149,19 @@ visibility signal at the moment of an event (UNCONFIRMED).
 - The log went to the terminal session (background command output outside the repo); no log file is in the repo.
 - Several results rest on owner answers without a screenshot; the Evidence column says which.
 
+## Open items
+
+- Full screen: try levels above `.screenSaver` (for example the shield level). The top band may be drawn by the system outside normal window levels. This is not known.
+- `.stationary`: only scenarios e and g were run with it. Rerun a, c, d and f with `--behavior stationary` before adopting it.
+- Window level `.statusBar`: Spotlight and the widest app menu are UNCONFIRMED. Check with a screenshot taken while they are open.
+- The `constrainFrameRect` override was always on in S-002. A run without it would show whether the S-001 y = 867 comes back, and when.
+- Not tested: clicking the panel in a full-screen Space, an external display, macOS 15, an app bundle.
+
 ## VERIFY items answered
 
 - `docs/ARCHITECTURE.md`, "Panel (VERIFY on macOS 27)": `canJoinAllSpaces` + `fullScreenAuxiliary` works for Spaces,
   Stage Manager and Mission Control. Suggest adding:
-  - `.stationary`, because without it the panel is pushed away by Show Desktop (scenario g).
+  - `.stationary`, because without it the panel is pushed away by Show Desktop (scenario g). Only scenarios e and g were run with it (see Open items).
   - A note that in a full-screen app the top band hides the upper part of the panel at every level tried, so the
     island needs a full-screen rule (for example: content only below the notch, or a presentation mode).
   - `constrainFrameRect` override (already suggested in S-001).
