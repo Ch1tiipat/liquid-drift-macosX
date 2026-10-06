@@ -32,7 +32,7 @@ The app has no menu and no Dock icon. It quits by itself after `--seconds` (defa
 | Question | Answer | Evidence |
 |---|---|---|
 | Q1 notch size readable | YES | `safeAreaInsets.top` = 32, `auxiliaryTopLeftArea` / `auxiliaryTopRightArea` both present. Two formulas give the same rect (see Formulas). |
-| Q2 panel hugging the notch | YES | Owner confirmed variant A and variant B line up with the notch. Owner screenshot (not committed) shows the pill centered over the notch, above the menu bar. |
+| Q2 panel hugging the notch | YES | Owner confirmed variant A and variant B line up with the notch. Owner screenshot (not committed) shows the pill centered over the notch, above the menu bar. Screenshot evidence: variant A, no screenshot; variant B, yes (one screenshot at default scaling before the fix and one after the fix show the pill centered over the notch). A variant without a screenshot rests on the owner's answer only. One earlier owner answer ('lines up') disagreed with a screenshot taken at the same time (the panel sat below the menu bar because of the bug fixed later), so answers without a screenshot are weaker evidence. |
 | Q3 window level above menu bar | YES | Owner confirmed the panel is drawn above the menu bar at every level tried. Lowest tried: `.mainMenu` (24). |
 | Q4 display scaling | UNCONFIRMED | The scaling option was never actually changed: the screen stayed 1470 x 956 pt in all reads and in owner screenshots (2940 x 1912 px). The repositioning path was exercised by Dock-area changes only (see Scaling table). |
 | Q5 hotkey without Accessibility | YES | Carbon `RegisterEventHotKey` (Control+Option+Command+L) returned status 0. Owner pressed it twice: panel hid, then came back (log: `visible = false`, then `visible = true`). Owner saw no permission prompt. |
@@ -95,12 +95,14 @@ custom = 26 (`.mainMenu` + 2, because `.statusBar` is already `.mainMenu` + 1).
 | Level | Above menu bar (owner) | Side effect (owner) |
 |---|---|---|
 | `.mainMenu` (24) | yes | not asked |
-| `.statusBar` (25) | yes | none |
-| `.popUpMenu` (101) | yes | none (owner was asked to open a menu near the notch) |
-| `.screenSaver` (1000) | yes | none |
-| custom (26) | yes | covers an open menu |
+| `.statusBar` (25) | yes | UNCONFIRMED |
+| `.popUpMenu` (101) | yes | UNCONFIRMED |
+| `.screenSaver` (1000) | yes | UNCONFIRMED |
+| custom (26) | yes | UNCONFIRMED |
 
-Lowest working level: `.mainMenu` (24). Note the side-effect answers do not fit the raw values: menus normally draw
+Owner's raw answers, kept for the record: `.statusBar` none; `.popUpMenu` none; `.screenSaver` none; custom 26 covers an open menu. They contradict the raw level values, so this column is not established. Recheck with a deliberate test in S-002.
+
+Lowest level tried: `.mainMenu` (24). Levels below 24 were not tried, so this is not proven to be the lowest working level. `.mainMenu` is also the level of the menu bar itself, so the panel is above the bar only because of window ordering. Use `.statusBar` (25) as the Phase 1 starting point. Note the side-effect answers do not fit the raw values: menus normally draw
 at `.popUpMenu` (101), so level 26 should be below an open menu and 101 / 1000 should be at or above it.
 Treat the side-effect column as **needs recheck**. Suggestion for Phase 1: start with `.statusBar` and recheck
 open-menu overlap with a deliberate test.
@@ -110,7 +112,7 @@ open-menu overlap with a deliberate test.
 | Method | Works | Permission | What the owner saw |
 |---|---|---|---|
 | Carbon `RegisterEventHotKey`, Control+Option+Command+L | yes (toggle off and on) | none observed | no prompt |
-| `NSEvent.addGlobalMonitorForEvents(.keyDown)` | no, while not trusted | Accessibility (`AXIsProcessTrusted()` = false) | no prompt, no toggle |
+| `NSEvent.addGlobalMonitorForEvents(.keyDown)` | no, while not trusted | Not established. `AXIsProcessTrusted()` was false and key presses were not delivered. Nothing was granted, so it is not known whether Accessibility, Input Monitoring or something else is needed. | no prompt, no toggle |
 
 Carbon callback isolation: the handler is installed on `GetApplicationEventTarget()`, so it runs on the main thread;
 the C callback uses `MainActor.assumeIsolated` to reach main-actor state.
@@ -129,6 +131,12 @@ real app bundle until the Phase 1 app exists.
 
 `NSApplication.didChangeScreenParametersNotification` fired several times while the Dock area changed
 (`visibleFrame` bottom 64 → 62 → 61 → 60); `frame`, `safeAreaInsets` and the notch rect did not change.
+
+## Open items for S-002
+
+- Q4 display scaling: change the scaling for real (More Space, then Larger Text), confirm that the printed `frame` changes, then check the panel.
+- Window level side effects: a deliberate recheck (an open menu, Spotlight, Control Center) with the `constrainFrameRect` fix in place.
+- Q6 and every permission result stay UNCONFIRMED until the Phase 1 app bundle exists.
 
 ## VERIFY items answered
 
