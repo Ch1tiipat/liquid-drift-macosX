@@ -3,6 +3,14 @@
 Mood: deep navy-black with electric blue and a soft white glow, with film grain.
 The look comes from the owner's reference images. Layouts are original.
 
+## Figma
+- File: "Liquid Drift UI", https://www.figma.com/design/l9GC4VkKqM9sKyAx3ki58F
+- Built: color and dimension variables (from the tokens below), text styles, a Components page,
+  the Control Center and the Settings (General) screen.
+- Not built yet: the island states.
+- The file uses Inter as a stand-in for SF Pro because the Figma MCP renderer cannot lay out SF Pro.
+  All text uses text styles, so changing the styles switches the whole file (ADR-004 is still pending).
+
 ## Colors (tokens)
 | Token | Hex | Use |
 |---|---|---|
