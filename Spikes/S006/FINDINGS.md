@@ -77,7 +77,7 @@ names, enum values, timestamps); they are observations, not designed tests. Prom
 
 | Option | Tool | Scenario | Result | Latency | Permissions |
 |---|---|---|---|---|---|
-| A hooks | Codex CLI | normal turn | YES | observation; 0 to 1 ms; 16 `UserPromptSubmit`, 14 `Stop` | project `.codex/hooks.json`; trust screens seen (owner answer only) |
+| A hooks | Codex CLI | normal turn | YES | observation; 0 to 1 ms; 16 `UserPromptSubmit`, 14 `Stop`, 2 `Interrupt` | project `.codex/hooks.json`; trust screens seen (owner answer only) |
 | A hooks | Codex CLI | tool call | YES | observation; `PreToolUse` 9, `PostToolUse` 6; see note 3 | same |
 | A hooks | Codex CLI | waiting for the user | UNCONFIRMED | not run; no `PermissionRequest` seen | same |
 | A hooks | Codex CLI | interrupted turn | UNCONFIRMED | `Interrupt` seen 2 times, each without `Stop`; what the owner pressed is not known | same |
@@ -87,14 +87,15 @@ names, enum values, timestamps); they are observations, not designed tests. Prom
 | B session files | Codex CLI | tool call | YES | observation; 8 tool-call lines, 20 ms to 1.6 s before `PreToolUse`; state stays working; see note 3 | none asked |
 | B session files | Codex CLI | waiting for the user | UNCONFIRMED | not run | none asked |
 | B session files | Codex CLI | interrupted turn | UNCONFIRMED | a `turn_aborted` event line 1 ms after each `Interrupt` hook (2); mapped to idle | none asked |
-| B session files | Codex CLI | two sessions at once | UNCONFIRMED | not run; 5 sessions gave 5 separate files | none asked |
+| B session files | Codex CLI | two sessions at once | UNCONFIRMED | not run; 5 transcript files, 3 with prompts; file 4 was opened twice (a 4th `SessionStart` with no new file) | none asked |
 | B session files | Codex CLI | tool closed during a turn | UNCONFIRMED | not run; see note 4 | none asked |
 
 Note 3. Hooks and transcript lines do not pair one to one. 9 `PreToolUse` against 8 tool-call lines: two
 `PreToolUse` events (0.2 s apart) followed one tool-call line. 3 `PreToolUse` events had no `PostToolUse` before
 the next tool call; 2 of those had a tool-output line within 300 ms. Cause unknown.
 
-Note 4. Counts that do not match: 4 `SessionStart`, 6 `SessionEnd`, 5 transcript files. 2 of the 6 `SessionEnd`
+Note 4. Counts that do not match: 4 `SessionStart` (3 opened files 1, 3 and 4; 1 reopened file 4), 6 `SessionEnd`,
+5 transcript files. 2 of the 6 `SessionEnd`
 events were followed within 50 ms by a new transcript file holding one `session_meta` line and nothing else. Cause
 unknown. Within 1 s after each of the 6 `SessionEnd` events, no line was added to a transcript that already had
 lines.
@@ -104,7 +105,7 @@ lines.
 | Question | Answer | Evidence |
 |---|---|---|
 | Claude Code session path found from the scratch path | YES | computed path matched each of the 6 Claude Code sessions run |
-| Codex transcript path known before the first prompt | YES | `transcript_path` in the `SessionStart` payload; 5 of 5 files recorded |
+| Codex transcript path known before the first prompt | YES | 3 of the 5 files got prompts (files 1, 3, 4); the watcher saw each of their paths 13 to 89 ms after a `SessionStart` hook and 0.07 to 11.8 s before the first `UserPromptSubmit`. The helper does not log which event supplied a path; the event is inferred from timing. Files 2 and 5 (no prompt) were seen 47 and 11 ms after a `SessionEnd`; guess, UNCONFIRMED: that payload named them |
 | Watcher idle CPU | YES | 0.00 % average and maximum, 13 samples over 65 s, 11 MB resident (Claude Code mode) |
 | Format change gives unknown, not a wrong state | YES | renamed keys and a renamed event type gave unknown in both classifiers; see Observations |
 | macOS permission prompt during the runs | UNCONFIRMED | not answered by the owner; for an app bundle UNCONFIRMED in any case (Limits) |
