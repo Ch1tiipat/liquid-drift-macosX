@@ -1,7 +1,7 @@
 import AppKit
 
 // Usage:
-//   S005 images <scratch>                          write plain-colour TIFFs of about 1, 10 and 50 MB
+//   S005 images <scratch>                          write TIFFs of about 1, 10 and 50 MB, plain colour and noise
 //   S005 watch [--level count|types|data] [--interval 1.0] [--seconds 300]
 //                                                  poll the general pasteboard; the item present at start is not read
 //   S005 write-marker | write-plain                put a self-made dummy item (with or without marker types) on the pasteboard
