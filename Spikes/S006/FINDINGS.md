@@ -77,30 +77,40 @@ names, enum values, timestamps); they are observations, not designed tests. Prom
 
 | Option | Tool | Scenario | Result | Latency | Permissions |
 |---|---|---|---|---|---|
-| A hooks | Codex CLI | normal turn | YES (observation) | 0 to 1 ms; 16 `UserPromptSubmit`, 14 `Stop` | project `.codex/hooks.json`; project trust and per-hook trust in `/hooks` (owner did both) |
-| A hooks | Codex CLI | tool call | YES (observation) | `PreToolUse` 9, `PostToolUse` 6 | same |
+| A hooks | Codex CLI | normal turn | YES | observation; 0 to 1 ms; 16 `UserPromptSubmit`, 14 `Stop` | project `.codex/hooks.json`; trust screens seen (owner answer only) |
+| A hooks | Codex CLI | tool call | YES | observation; `PreToolUse` 9, `PostToolUse` 6; see note 3 | same |
 | A hooks | Codex CLI | waiting for the user | UNCONFIRMED | not run; no `PermissionRequest` seen | same |
 | A hooks | Codex CLI | interrupted turn | UNCONFIRMED | `Interrupt` seen 2 times, each without `Stop`; what the owner pressed is not known | same |
 | A hooks | Codex CLI | two sessions at once | UNCONFIRMED | not run | same |
-| A hooks | Codex CLI | tool closed during a turn | UNCONFIRMED | not run; `SessionEnd` seen at 6 session ends | same |
-| B session files | Codex CLI | normal turn | YES (observation) | working -1471 to +92 ms against `UserPromptSubmit` (16); done 73 to 138 ms after `Stop` (14) | none asked |
-| B session files | Codex CLI | tool call | YES (observation) | tool-call lines 20 ms to 1.4 s before `PreToolUse` (8 calls); state stays working | none asked |
+| A hooks | Codex CLI | tool closed during a turn | UNCONFIRMED | not run; see note 4 | same |
+| B session files | Codex CLI | normal turn | YES | observation; working -1471 to +92 ms against `UserPromptSubmit` (16); done 73 to 138 ms after `Stop` (14) | none asked |
+| B session files | Codex CLI | tool call | YES | observation; 8 tool-call lines, 20 ms to 1.6 s before `PreToolUse`; state stays working; see note 3 | none asked |
 | B session files | Codex CLI | waiting for the user | UNCONFIRMED | not run | none asked |
 | B session files | Codex CLI | interrupted turn | UNCONFIRMED | a `turn_aborted` event line 1 ms after each `Interrupt` hook (2); mapped to idle | none asked |
 | B session files | Codex CLI | two sessions at once | UNCONFIRMED | not run; 5 sessions gave 5 separate files | none asked |
-| B session files | Codex CLI | tool closed during a turn | UNCONFIRMED | not run; at 6 session ends no line was written | none asked |
+| B session files | Codex CLI | tool closed during a turn | UNCONFIRMED | not run; see note 4 | none asked |
+
+Note 3. Hooks and transcript lines do not pair one to one. 9 `PreToolUse` against 8 tool-call lines: two
+`PreToolUse` events (0.2 s apart) followed one tool-call line. 3 `PreToolUse` events had no `PostToolUse` before
+the next tool call; 2 of those had a tool-output line within 300 ms. Cause unknown.
+
+Note 4. Counts that do not match: 4 `SessionStart`, 6 `SessionEnd`, 5 transcript files. 2 of the 6 `SessionEnd`
+events were followed within 50 ms by a new transcript file holding one `session_meta` line and nothing else. Cause
+unknown. Within 1 s after each of the 6 `SessionEnd` events, no line was added to a transcript that already had
+lines.
 
 ### Other answers
 
 | Question | Answer | Evidence |
 |---|---|---|
-| Claude Code session path found from the scratch path | YES | computed path matched 6 of 6 sessions |
+| Claude Code session path found from the scratch path | YES | computed path matched each of the 6 Claude Code sessions run |
 | Codex transcript path known before the first prompt | YES | `transcript_path` in the `SessionStart` payload; 5 of 5 files recorded |
 | Watcher idle CPU | YES | 0.00 % average and maximum, 13 samples over 65 s, 11 MB resident (Claude Code mode) |
 | Format change gives unknown, not a wrong state | YES | renamed keys and a renamed event type gave unknown in both classifiers; see Observations |
 | macOS permission prompt during the runs | UNCONFIRMED | not answered by the owner; for an app bundle UNCONFIRMED in any case (Limits) |
-| Codex hook trust step needed | YES | owner trusted the project and the hooks in `/hooks` before any scratch hook ran (owner answer only for the screens) |
-| Codex hooks write while the session is in `Read Only` mode (UI label) | YES | `/status` showed `Read Only` (UI label; owner screenshot); that session's turn wrote `UserPromptSubmit` and `Stop` to `events.log` |
+| Codex trust screens appear (project, hooks) | YES | owner answer only; no scratch hook event came before the owner's trust step |
+| Codex hooks need trust to run | UNCONFIRMED | the untrusted case was not tested; the Codex docs say so (docs alone do not count as YES) |
+| Codex hooks write while the session is in `Read Only` mode (UI label) | YES | `/status` showed `Read Only` (UI label; owner screenshot). `events.log` has no session id: the `UserPromptSubmit` and `Stop` lines were matched to that session by time and the screenshot (owner answer only for the match) |
 
 ### Observations
 
@@ -119,7 +129,7 @@ names, enum values, timestamps); they are observations, not designed tests. Prom
   format is not a stable interface.
 - Codex writes a `task_started` line when a session opens, before any prompt. The classifier ignores that one and
   waits for the first user message after `turn_context`.
-- Codex `SessionEnd` left no line in the transcript in 6 of 6 session ends, so option B cannot see a Codex exit.
+- No transcript line marked a Codex session end (note 4), so option B did not see a Codex exit in these runs.
 - Codex docs list an `Interrupt` hook event; Claude Code has none, and its `Stop` does not run on an interrupt
   (Claude Code docs, and no `Stop` in the run).
 - Format-change tests on copies in the scratch folder. Claude Code: `stop_reason`, `type` or `message` renamed.
@@ -132,13 +142,15 @@ names, enum values, timestamps); they are observations, not designed tests. Prom
 
 ### Recommendation for ADR-012 (input for the owner, who decides)
 
-Claude Code: session files as the base (nothing to install, no prompt seen, near-zero idle CPU) for working,
+Claude Code: session files as the base (nothing to install; macOS prompt not answered by the owner and UNCONFIRMED
+for an app bundle; near-zero idle CPU in Claude Code mode) for working,
 done and idle. Hooks as an opt-in extra for "waiting for you", which the session file does not show. Hooks need
 the user to add config and trust the folder.
 
-Codex CLI: same shape, with less evidence. Session files gave working and done in every observed turn and
+Codex CLI: same shape, with less evidence. Session files gave working in 16 observed turns, done in 14 and
 `turn_aborted` on interrupt; the hooks add `PermissionRequest` (not seen yet) and `Interrupt`. Hooks need
-project trust plus per-hook trust in `/hooks`, so they cost the user more setup than Claude Code hooks.
+trust screens for the project and for each hook in `/hooks`, so they cost the user more setup than Claude Code
+hooks. Idle CPU of the Codex mode was not measured.
 
 Both tools: a provider needs a fallback when no line or event comes for a while: interrupts and exits are
 partly invisible. Idea, not tested: check whether the tool process is still running, and show unknown or idle.
@@ -154,6 +166,10 @@ same way, which may be too strict for new event types (input for the ADR).
   Claude Code runs the session stayed busy for about 30 to 40 s after `Stop`, with `PreToolUse` and
   `PostToolUse` events and once a second working and done cycle without a new prompt. Guess, UNCONFIRMED: one of
   the user's own Stop hooks caused it; no hook was switched off to test this.
+- The Codex classifier was built from, and checked against, the same sessions. There is no separate test set, so
+  the Codex option B rows are results on the data the rules came from.
+- Idle CPU was measured in Claude Code mode. The Codex mode polls a list file every 100 ms; its idle CPU was not
+  measured, and the 0.00 % figure does not apply to it.
 - Codex results come from the owner's own prompts, not planned scenarios. Codex was not run with a permission
   request, two sessions at once, or a closed window.
 - One run each for the Claude Code interrupt and the closed window, at the same time in two sessions.
@@ -164,6 +180,7 @@ same way, which may be too strict for new event types (input for the ADR).
 
 - Codex CLI: waiting for the user, two sessions, closed window, and a known Esc. Repeat in Phase 1 with planned turns.
 - Claude Code: folder trust declined (hooks held back) was not tested.
+- Codex: hooks in an untrusted project or with untrusted hooks were not tested.
 - Owner to say whether a macOS permission prompt appeared during the runs.
 - Splitting parallel sessions with `session_id` in the hook helper: not done, by design.
 - Option B waiting heuristic ("a tool call with no result for N seconds"): not tried; a long-running tool looks the same.
@@ -180,10 +197,13 @@ same way, which may be too strict for new event types (input for the ADR).
 - `docs/FEATURES.md`, "the hook format of each tool": answered. Claude Code: project `.claude/settings.json`, JSON on
   stdin. Codex: project `.codex/hooks.json` (or `[hooks]` in `.codex/config.toml`), JSON on stdin with
   `transcript_path` and `cwd`. Suggest listing the event names used here.
-- `docs/FEATURES.md`, "whether Codex needs the user to trust a hook once": answered YES. Project trust plus trust per
-  hook in `/hooks`; per the Codex docs the trust is tied to the hook's hash, so a changed hook needs review again.
+- `docs/FEATURES.md`, "whether Codex needs the user to trust a hook once": partly answered. Trust screens for the
+  project and for each hook in `/hooks` appeared (owner answer only). Whether hooks stay off without trust was not
+  tested, so keep VERIFY on that part. Per the Codex docs (not tested), trust is tied to the hook's hash, so a
+  changed hook needs review again.
 - `docs/ARCHITECTURE.md`, Agent providers: `.unknown` on a format change works in the spike with a key-name
   fingerprint, a list of known event types and a latch. Suggest adding "a provider stays `.unknown` once a line
   fails the fingerprint, until restarted".
-- `docs/SECURITY_MODEL.md`, "Hooks change another tool's config": confirmed that hook setup needs a trust step in
-  both tools, and that Codex records trust per hook hash. Suggest no change to the mitigation.
+- `docs/SECURITY_MODEL.md`, "Hooks change another tool's config": a trust step appeared in both tools (owner answer
+  only); the untrusted case and the per-hash trust (Codex docs) were not tested. Suggest no change to the
+  mitigation yet.
